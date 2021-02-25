@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{IzJe:function(n,o,t){"use strict";t.r(o),t.d(o,"Posts2020RoutingModule",function(){return s});var r=t("tyNb"),e=t("/Ml4"),i=t("fXoL");let s=(()=>{class n{}return n.\u0275mod=i.Fb({type:n}),n.\u0275inj=i.Eb({factory:function(o){return new(o||n)},imports:[[r.d.forChild(e.a)],r.d]}),n})()}}]);

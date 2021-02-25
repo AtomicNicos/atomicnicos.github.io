@@ -1,0 +1,18 @@
+User-agent: *
+Disallow: /docs/*
+Disallow: /404
+
+User-agent: *
+Crawl-delay: 120
+Sitemap: https://atomicnicos.me/sitemap.xml
+Disallow: /docs/*
+Disallow: /404
+
+User-agent: discobot
+Disallow: /
+Disallow: /404
+
+User-agent: Slurp
+Crawl-delay: 4
+Disallow: /docs/*
+Disallow: /404

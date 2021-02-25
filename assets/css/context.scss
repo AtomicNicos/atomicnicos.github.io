@@ -1,0 +1,53 @@
+@media screen and (max-width: 768px) {
+
+  header { padding: 20px !important; }
+
+  .container {
+    min-width: 98% !important;
+    padding: 0 3px !important;
+  }
+
+  .main-page { flex-direction: column; }
+
+  .main-content, .sidebar { width: 100% !important; }
+
+  .main-content {
+    border-right: 0px !important;
+    border-bottom: 1px dashed #b5e853 !important;
+    margin-bottom: 3px !important;
+  }
+
+  .sidebar {
+    margin: 2px 0 !important;
+  }
+
+  .nav-elements > a, ul > .paths {
+    padding: 3px 5px !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+  }
+
+  .media-container > * {
+    max-width: 90% !important;
+  }
+
+  .document {
+    width: 100% !important;
+    height: 12.5em !important;
+  }
+
+  ngx-tweet {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  h1 { font-size: 1.25em !important; }
+  h2 { font-size: 1em !important; }
+  h3 { font-size: 1em !important; }
+  h4 { font-size: 1em !important; }
+  h5 { font-size: 0.9375em !important; }
+  h6 { font-size: 0.875em !important; }
+  p, li { font-size: 0.875em !important; }
+  td { font-size: 0.75em !important; }
+}
