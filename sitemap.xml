@@ -95,8 +95,34 @@
     <priority>0.60</priority>
     <changefreq>weekly</changefreq>
   </url>
+
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_01_20+Talking-at-Leeds-EHS/</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
   <url>
     <loc>https://atomicnicos.me/postx/2021/2021_01_23+Website_Design_Choices/</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_01_31+Talking-at-DEFCON-Worcester/</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_02_01+Organising-a-conference/</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_02_06+Building-DOs-Website/</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_02_26+TraceLabs-CTF-With-Hacksouth/</loc>
     <priority>0.60</priority>
     <changefreq>weekly</changefreq>
   </url>

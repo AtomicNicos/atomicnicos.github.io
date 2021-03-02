@@ -1,8 +1,13 @@
 .media-container {
   width: 100%;
-  display: flex;
   justify-content: center;
+  display: flex;
   margin: 10px 0;
+
+  * {
+    margin: 0 auto;
+    max-width:100%;
+  }
 }
 
 .center {
