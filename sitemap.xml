@@ -132,6 +132,26 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-All</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Python</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Static-Hard</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Maze-Hard</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://atomicnicos.me/tags/CTF/</loc>
     <priority>0.40</priority>
     <changefreq>weekly</changefreq>

@@ -1,0 +1,315 @@
+<!DOCTYPE html><html lang="en-US"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="og:url" content="https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Maze-Hard">
+  <meta name="og:locale" content="en_us">
+  <meta name="og:site_name" content="https://atomicnicos.me">
+  <meta name="og:title" content="Dissecting the Central-Infosec Game Exploitation challenge | AtomicNicos's Blog">
+  <meta name="og:description" content="Dissecting the Central-Infosec Game Exploitation challenge: A post on 'AtomicNicos's Blog at the end of the universe, talking all things infosec, IoT, development and personal.">
+  <meta name="og:image" content="https://atomicnicos.mehttps://www.centralinfosec.com/blog/img/central-infosec-shield-black.png">
+  <meta name="description" content="Dissecting the Central-Infosec Game Exploitation challenge: A post on 'AtomicNicos's Blog at the end of the universe, talking all things infosec, IoT, development and personal.">
+  <meta name="keywords" content="atomicnicos, osint, infosec, security, cybersec, cybersecurity, central-infosec, ctf, challenge, write-up, game, exploitation">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Maze-Hard">
+  <meta name="twitter:image" content="https://atomicnicos.mehttps://www.centralinfosec.com/blog/img/central-infosec-shield-black.png">
+  <meta name="twitter:label1" content="Written By">
+  <meta name="twitter:data1" content="Nicolas Boeckh">
+  <meta name="twitter:site" content="@AtomicNicos">
+  <meta name="twitter:creator" content="@AtomicNicos">
+  <meta name="twitter:image:width" content="1280">
+  <meta name="twitter:image:height" content="720">
+  <title>Dissecting the Central-Infosec Game Exploitation challenge | AtomicNicos's Blog</title>
+  <base href="/">
+  <link rel="icon" type="image/x-icon" href="favicon.png">
+  <script src="https://kit.fontawesome.com/88cfc0e7e2.js" integrity="sha384-D5umrdla2Gz+/XOF0CPMgLM3J1PNIy6v3LWJLECqQFWq6VhEdlot37ppKG2HKH8b" crossorigin="anonymous"></script>
+  <script>
+    // Log the value of FCP to the console | https://web.dev/fcp/#measure-fcp-in-javascript
+    /*const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntriesByName('first-contentful-paint')) {
+        // console.log('FCP: ', entry.startTime);
+        observer.disconnect();
+      }
+    })
+    observer.observe({type: 'paint', buffered: true});*/
+  </script>
+<link rel="stylesheet" href="styles.0bd315b99491284b7394.css"><style ng-transition="atomicnicos-me">.sidebar[_ngcontent-sc95]{position:relative;float:left;width:30%;padding:0 10px;overflow-y:visible}</style><style ng-transition="atomicnicos-me">footer[_ngcontent-sc96]{border-top:1px dashed #b5e853}</style><style ng-transition="atomicnicos-me">div[_ngcontent-sc93] > a[_ngcontent-sc93] > span[_ngcontent-sc93]{margin:.25rem;padding:.5rem;background-color:#2e2e2e;border-radius:.25rem;font-size:smaller}div[_ngcontent-sc93] > a[_ngcontent-sc93]{margin:.5rem 0}</style><style ng-transition="atomicnicos-me">.break-height[_ngcontent-sc46] {
+    height: 150px;
+  }</style><style ng-transition="atomicnicos-me">.collapsible-controller[_ngcontent-sc19]{background-color:#303030;color:#b5e853;cursor:pointer;padding:18px;width:100%;border:none;text-align:left;outline:none;font-size:18px}.active[_ngcontent-sc19], .collapsible-controller[_ngcontent-sc19]:hover{background-color:#202020}.collapsible[_ngcontent-sc19]{padding:10px 18px;display:none;overflow:hidden;background-color:#464646}.collapsible[_ngcontent-sc19] > {padding:0}.collapsible[_ngcontent-sc19] > , ul[_ngcontent-sc19]{margin:5px 0!important}.collapsible.active[_ngcontent-sc19]{display:block}</style><style ng-transition="atomicnicos-me">p[_ngcontent-sc25]{font-size:smaller;color:#aaa}</style><style ng-transition="atomicnicos-me">p[_ngcontent-sc26]{font-size:smaller;color:#aaa}span[_ngcontent-sc26]{margin:.375rem;padding:.5rem;border-radius:.5rem;background-color:#484848}</style></head>
+<body>
+  <app-root ng-version="11.0.0"><div class="h-100 w-100 d-flex flex-column justify-content-between"><app-header class="align-self-stretch"><header class="mb-3"><div class="container"><a id="a-title" href="/"><h1 class="ml-2">atomicnicos​@1337m4ch1n3</h1></a><h2>AtomicNicos's Blog at the end of the universe.</h2><nav><ul class="nav-lists d-flex flex-row flex-wrap"><li class="paths align-middle my-auto justify-content-center">Paths:</li><li class="nav-elements"><a href="/whoami">~$ whoami</a></li><li class="nav-elements"><a href="/posts">~$ ls -la ./posts</a></li></ul></nav></div></header></app-header><app-main-body class="align-self-stretch align-items-stretch mb-auto" _nghost-sc95=""><div _ngcontent-sc95="" class="container main-page"><div _ngcontent-sc95="" class="main-content"><router-outlet></router-outlet><app-central-infosec-ctf-hack-the-maze-hard _nghost-sc46=""><app-post-body _ngcontent-sc46=""><h1>~$ Dissecting the Central-Infosec Game Exploitation challenge</h1><app-when _nghost-sc25=""><p _ngcontent-sc25="">Posted on Apr. 20th, 2021. <!----></p></app-when><app-tag-viewer _nghost-sc26=""><p _ngcontent-sc26=""><strong _ngcontent-sc26="">Tags:</strong><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/Information Security">Information Security</a></span><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/CTF">CTF</a></span><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/Write-Up">Write-Up</a></span><!----></p><!----><br _ngcontent-sc26=""></app-tag-viewer><div><p _ngcontent-sc46="">This is a write-up for the hardest of the "13. Web Exploitation: Games (CIS-WEBSRV01)" series of challenges in the context of the <a _ngcontent-sc46="" target="_blank" href="https://ctf.centralinfosec.com/" rel="noopener"><em _ngcontent-sc46="" class="fas fa-external-link-square-alt"></em> Central Infosec CTF</a>.</p><p _ngcontent-sc46="">The challenge consists of moving a dot through a maze, but where the time limit makes that impossible. So we need to exploit the game mechanics to make the dot move unexpectedly.</p><h4 _ngcontent-sc46="">Summary</h4><ul _ngcontent-sc46=""><li _ngcontent-sc46=""><a _ngcontent-sc46="" routerlink="." fragment="step-01" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Maze-Hard#step-01">Step 1: Reconnaissance</a></li><li _ngcontent-sc46=""><a _ngcontent-sc46="" routerlink="." fragment="step-02" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Maze-Hard#step-02">Step 2: Source analysis</a></li><li _ngcontent-sc46=""><a _ngcontent-sc46="" routerlink="." fragment="step-03" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Maze-Hard#step-03">Step 3: Prototyping &amp; testing</a></li><li _ngcontent-sc46=""><a _ngcontent-sc46="" routerlink="." fragment="step-04" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Maze-Hard#step-04">Step 4: Automating</a></li></ul><br _ngcontent-sc46=""><h4 _ngcontent-sc46="" id="step-01">Step 1: Reconnaissance</h4><p _ngcontent-sc46="">The first step in this challenge is actually finding it. As per the <code _ngcontent-sc46="">$MACHINE_IP/robots.txt</code> file, the URL for the challenge is <code _ngcontent-sc46="">$MACHINE_IP/hack-the-maze-game-hard</code>, and as we load it up in a browser, we see the following page:</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" src="assets/images/2021/central-infosec-ctf/hack-the-maze/reconnaissance.png" alt="Challenge page"></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">Here the blue dot is the one that the user controls (either with the "WASD" keys or the arrow keys). You are supposed to go from that dot, through the maze and up to the gren dot.</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" src="assets/images/2021/central-infosec-ctf/hack-the-maze/maze-complete.png" alt="Completed maze"></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">So let's check out what's going on on this page: Let us open the Developer view by pressing <code _ngcontent-sc46="">Ctrl+Shift+I</code> and visit the <code _ngcontent-sc46="">Elements</code> tab:</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" src="assets/images/2021/central-infosec-ctf/hack-the-maze/script.png" alt="Page script"></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">We can see here that the page can frequently use the <code _ngcontent-sc46="">$.ajax</code> method to do "POST" requests to the <code _ngcontent-sc46="">/check_maze</code> and the <code _ngcontent-sc46="">/update_maze</code> endpoints.</p><p _ngcontent-sc46="">Let us now check the <code _ngcontent-sc46="">Network</code> tab:</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" src="assets/images/2021/central-infosec-ctf/hack-the-maze/network.png" alt="Page networking"></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">Here we see that the previous endpoints are contacted. In red, the <code _ngcontent-sc46="">update_maze</code> endpoint is called every second, and in green, the <code _ngcontent-sc46="">check_maze</code> endpoint is called every time I press the movement keys.</p><br _ngcontent-sc46=""><h4 _ngcontent-sc46="" id="step-02">Step 2: Source analysis</h4><p _ngcontent-sc46="">Let us check what is sent in these POST requests:</p><p _ngcontent-sc46="">For the <code _ngcontent-sc46="">update_maze</code> request:</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" src="assets/images/2021/central-infosec-ctf/hack-the-maze/update_maze.png" alt="The update_maze request."></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">This request isn't very interesting, as it doesn't communicate anything to the endpoint.</p><p _ngcontent-sc46="">For the <code _ngcontent-sc46="">check_maze</code> request:</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" src="assets/images/2021/central-infosec-ctf/hack-the-maze/check_maze.png" alt="The update_maze request."></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">This request is interesting though, because it communicates 5 variables: <code _ngcontent-sc46="">movingAllowed</code>, <code _ngcontent-sc46="">currRectX</code>, <code _ngcontent-sc46="">currRectY</code>, <code _ngcontent-sc46="">newX</code> &amp; <code _ngcontent-sc46="">newY</code></p><p _ngcontent-sc46="">Simply put, it sends it's current coordinates, and the future coordinates depending on where the user moved to.</p><p _ngcontent-sc46="">By breaking down the source code we find the following:</p><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-javascript">var e,t,n=document.getElementById("mazecanvas"),a=n.getContext("2d"),i=3,l=3,r=1300,c=706;
+function o(e,t,n){f(i,l,15,15),i=e,l=t,a.beginPath(),a.rect(e,t,15,15),a.closePath(),a.fillStyle=n,a.fill()}
+function d(t){var s,h,u;
+  switch((t=t||window.event).keyCode){case 38:case 87:t.preventDefault(),s=i,h=l-3;break;case 37:case 65:t.preventDefault(),s=i-3,h=l;break;case 40:case 83:t.preventDefault(),s=i,h=l+3;break;case 39:case 68:t.preventDefault(),s=i+3,h=l;break;default:return}
+  if(1===(u=function(e,t){
+    var n=a.getImageData(e,t,15,15).data,i=1;if(e&amp;gt;=0&amp;amp;&amp;amp;e&amp;lt;=r-15&amp;amp;&amp;amp;t&amp;gt;=0&amp;amp;&amp;amp;t&amp;lt;=c-15)
+    for(var l=0;l&amp;lt;900;l+=4){
+      if(128===n[l]&amp;amp;&amp;amp;127===n[l+1]&amp;amp;&amp;amp;127===n[l+2]){
+        i=0;break
+      }
+      if(0===n[l]&amp;amp;&amp;amp;255===n[l+1]&amp;amp;&amp;amp;0===n[l+2]){
+        i=2;break
+      }
+    }
+    else i=0;
+    return i
+  }(s,h)))
+  {
+    var g={movingAllowed:u,currRectX:i,currRectY:l,newX:s,newY:h};
+    $.ajax({url:"check_maze",type:"POST",dataType:"json",data:g,
+      success:function(t){!1===t.movingAllowed&amp;amp;&amp;amp;(clearInterval(e),f(0,0,n.width,n.height),a.font="40px Arial",a.fillStyle="blue",a.textAlign="center",a.textBaseline="middle",a.fillText(t.message,n.width/2,n.height/2),window.removeEventListener("keydown",d,!0)),o(t.newX,t.newY,"#0000FF"),i=t.newX,l=t.newY
+    }})
+  }
+}
+function f(e,t,n,i){a.beginPath(),a.rect(e,t,n,i),a.closePath(),a.fillStyle="black",a.fill()}
+!function(e,t){
+  f(0,0,n.width,n.height);var i=new Image;i.onload=function(){
+    a.drawImage(i,0,0),o(e,t,"#0000FF"),a.beginPath(),a.arc(1288,122,7,0,2*Math.PI,!1),a.closePath(),a.fillStyle="#00FF00",a.fill()
+  },i.src="maze.png"
+}(3,3),window.addEventListener("keydown",d,!0),t=190,
+  $.ajax({
+    url:"create_maze",method:"POST",
+      success:function(e){console.log("Maze Created")}
+  }),
+  e=setInterval(function(){
+    if(f(n.width/2-40,n.height/2+25-15,80,30),
+      $.ajax({url:"update_maze",method:"POST",success:function(e){t=e}}),t&amp;lt;=0)
+        return clearInterval(e),window.removeEventListener("keydown",d,!0),f(0,0,n.width,n.height),a.font="40px Arial",a.fillStyle="red",a.textAlign="center",a.textBaseline="middle",void a.fillText("Time's up!",n.width/2,n.height/2+25);a.font="20px Arial",a.fillStyle=t&amp;lt;=10&amp;amp;&amp;amp;t&amp;gt;5?"orangered":t&amp;lt;=5?"red":"green",a.textAlign="center",a.textBaseline="middle";var i=Math.floor(t/60),l=(t-60*i).toString();1===l.length&amp;amp;&amp;amp;(l="0"+l),a.fillText(i.toString()+":"+l,r/2,n.height/2+25),t--
+    },
+  1e3)
+</code></pre>
+</markdown></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">Sadly, we won't deobfuscate all of this. We will however identify some behavior!</p><p _ngcontent-sc46="">When you press a key, the <code _ngcontent-sc46="">d(t)</code> function is called, which grabs the key you typed and determines what direction that matches to, and the calls the <code _ngcontent-sc46="">check_maze</code> endpoint with that generated data.</p><p _ngcontent-sc46="">The <code _ngcontent-sc46="">f(e, t, n, i)</code> function draws the background of the maze.</p><p _ngcontent-sc46="">The anonymous <code _ngcontent-sc46="">!function(e,t)</code> function draws the blue dot, the green dot and displays the image.</p><p _ngcontent-sc46="">The event listener just hooks up <code _ngcontent-sc46="">d(t)</code> with the actual keypress.</p><p _ngcontent-sc46="">The final bit of this code is the <code _ngcontent-sc46="">e</code> interval, which executes the anonymous function that calls the maze update event.</p><br _ngcontent-sc46=""><p _ngcontent-sc46="">This is going to be complicated to mess with, so let's just focus on our various POST requests and try messing with those:</p><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-javascript">var g={movingAllowed:u,currRectX:i,currRectY:l,newX:s,newY:h};
+$.ajax({url:"check_maze",type:"POST",dataType:"json",data:g,
+  success:function(t){!1===t.movingAllowed&amp;amp;&amp;amp;(clearInterval(e),f(0,0,n.width,n.height),a.font="40px Arial",a.fillStyle="blue",a.textAlign="center",a.textBaseline="middle",a.fillText(t.message,n.width/2,n.height/2),window.removeEventListener("keydown",d,!0)),o(t.newX,t.newY,"#0000FF"),i=t.newX,l=t.newY
+}})
+
+$.ajax({
+    url:"create_maze",method:"POST",
+      success:function(e){console.log("Maze Created")}
+}),
+
+$.ajax({url:"update_maze",method:"POST",success:function(e){t=e}})
+</code></pre>
+</markdown></div><br _ngcontent-sc46=""><h4 _ngcontent-sc46="" id="step-03">Step 3: Prototyping &amp; testing</h4><p _ngcontent-sc46="">If we look at our previous requests as well as our reconnaissance, we can easily identify that the only interesting request will be the <code _ngcontent-sc46="">check_maze</code> request, so long as the success function remains respected. We can then feasibly force whatever the game to accept all the values in the response body, so long as the new value is at a distance of 3 from the old value, either horizontally or vertically.</p><p _ngcontent-sc46="">Well, our initial coordinates are <code _ngcontent-sc46="">(3,3)</code> and we will want to move laterally to <code _ngcontent-sc46="">(6,3)</code>.</p><p _ngcontent-sc46="">By opening up the console (<code _ngcontent-sc46="">Ctrl+Shift+I</code>) and the <code _ngcontent-sc46="">Console</code> tab, we can play around with <code _ngcontent-sc46="">$.ajax</code> requests.</p><p _ngcontent-sc46="">So, let's build the request!</p><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-javascript">// Move the function out of the way.
+function onSuccess(t) {
+  !1===t.movingAllowed &amp;amp;&amp;amp; (
+    clearInterval(e),
+    f(0,0,n.width,n.height),
+    a.font="40px Arial",a.fillStyle="blue",a.textAlign="center",a.textBaseline="middle",
+    a.fillText(t.message,n.width/2,n.height/2),
+    window.removeEventListener("keydown",d,!0)
+  ),
+  o(t.newX,t.newY,"#0000FF"),
+  i=t.newX,l=t.newY
+}
+
+// The request payload
+var payload={
+  movingAllowed:1,  // Never changes
+  currRectX:3,      // Current position is (x=3, y=3)
+  currRectY:3,
+  newX:6,           // We want to move to (x=6, y=3)
+  newY:3
+};
+
+// Executing the request
+$.ajax({url:"check_maze",type:"POST",dataType:"json",data:payload,success:function(t){onSuccess(t)}})
+</code></pre>
+</markdown></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">And now let's try it out!</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" src="assets/images/2021/central-infosec-ctf/hack-the-maze/experiment.gif" alt="Experiment successful."></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">Haha! Success! Now instead of just 3 pixels, let us make the dot move through the maze.</p><br _ngcontent-sc46=""><h4 _ngcontent-sc46="" id="step-04">Step 4: Automating</h4><p _ngcontent-sc46=""><strong _ngcontent-sc46="">DISCLAIMER:</strong> The way I personally went about it can be called the "sledgehammer" method. It also probably wasn't the intended method. It is however the one I'll discuss here.</p><p _ngcontent-sc46="">Well, we now have a way to move slightly to the right. Let's make it move slightly to the end of the maze!</p><p _ngcontent-sc46="">So this process is iterative: We go to a set of coordinates, we take note of them, and then we move to the next. And then we script the individual 3-by-3 segments along the way!</p><p _ngcontent-sc46="">It takes a bit, but let us come up with some automation!</p><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-python"># currentX, currentY, newX, newY
+coords = [(3,3,3,3)]
+
+def addX(startX, startY, endX, co):
+  co = co[:]    # Cloning the list to avoid overwriting the original list
+  for i in range(round((endX - startX) / 3)):
+    co += [(startX + i*3, startY, startX + (i+1) * 3, startY)]
+  return co
+
+coords = addX(3, 3, 27, coords)
+print(coords)
+
+# Output:
+# [(3, 3, 3, 3), (3, 3, 6, 3), (6, 3, 9, 3), (9, 3, 12, 3), (12, 3, 15, 3),
+#   (15, 3, 18, 3), (18, 3, 21, 3), (21, 3, 24, 3), (24, 3, 27, 3)]
+</code></pre>
+</markdown></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">Ok, now we have a small function, that moves us from one point to the next, but it only works in one direction (to the right).</p><p _ngcontent-sc46="">So now the key is to implement the other directions (down: +Y, left: -X, up: -Y), which will be quite similar to our previous <code _ngcontent-sc46="">addX</code> function. The main difference is in the loop because the bounds and operators are relevant to the axis they are affecting.</p><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-python">def addY(startX, startY, endY, co):
+    co = co[:]
+    for i in range(round((endY - startY) / 3)):
+        co += [(startX, startY + i * 3, startX, startY + (i+1)*3)]
+    return co
+
+def subX(startX, startY, endX, co):
+    co = co[:]
+    for i in range(round(abs(endX - startX) / 3)):
+        co += [(startX - i*3, startY, startX - (i+1) * 3, startY)]
+    return co
+
+def subY(startX, startY, endY, co):
+    co = co[:]
+    for i in range(round(abs(endY - startY) / 3)):
+        co += [(startX, startY - i * 3, startX, startY - (i+1)*3)]
+    return co
+</code></pre>
+</markdown></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">But now that we have this, we will want to make it be more than just a coordinate calculation system. We can extend it our <code _ngcontent-sc46="">$.ajax</code> requests, in such a way as to not kill our console output by exporting our requests to a text file (because it might make it complicated to deal with copying and pasting from the console).</p><p _ngcontent-sc46="">To that end, the <code _ngcontent-sc46="">build_request</code> function, which takes our current / new coordinates as parameters and generates the request as a string, and the <code _ngcontent-sc46="">export</code> function, which takes the entire coordinate list and builds the requests iteratively.</p><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-python">def build_request(x,y,nx,ny):
+    return '$.ajax({url:"check_maze",type:"POST",dataType:"json",' + \
+    'data:{movingAllowed: "1",currRectX: "' + str(x) + '",currRectY: "' + str(y) + '",newX: "' + str(nx) + '",newY: "' + str(ny) + '"},' + \
+    "success:function(t){ onSuccess(t) }" + \
+  "})".replace("\n", "").replace("\t", "")
+
+
+def export(co):
+  # Modify with "C:/Users/..." on Windows.
+    with open("~/hack-the-maze.txt", "w") as f:
+        f.write("""function onSuccess(t){!1===t.movingAllowed &amp;amp;&amp;amp; (clearInterval(e),f(0,0,n.width,n.height),a.font="40px Arial",a.fillStyle="blue",a.textAlign="center",a.textBaseline="middle",a.fillText(t.message,n.width/2,n.height/2),window.removeEventListener("keydown",d,!0)),o(t.newX,t.newY,"#0000FF"),i=t.newX,l=t.newY}\n""")
+        for d in co:
+            f.write("await " + build_request(d[0], d[1], d[2], d[3]) + ";\n")
+    f.close()
+
+print(build_request(3,3,6,3))
+
+# Output:
+# $.ajax({url:"check_maze",type:"POST",dataType:"json",
+# data:{movingAllowed: "1",currRectX: "3",currRectY: "3",newX: "6",newY: "3"},success:function(t){ onSuccess(t) }})
+</code></pre>
+</markdown></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">You might have noticed the usage of the <code _ngcontent-sc46="">await</code> keyword on line 13, and wondered why it is there. When I was experimenting with the requests, and getting the maze to process 200 at a time, sometimes a request would be sent after another, but received slightly before the previous one. This is how I found out that the backend verifies that the coordinates match up with the current coordinate system. The await keyword forces the frontend to wait for an answer and process it before moving on, limiting issues such as the one I just described.</p><p _ngcontent-sc46="">We now have a way to build a path, and a way to export the requests for this path. So now what? Well we find each of the new coordinates and we input them.</p><p _ngcontent-sc46="">I did this with some granularity, and saved "snapshots" of my work (basically a copy of my list each time I added something), so that I wouldn't have to start over again.</p><p _ngcontent-sc46="">Also, since typing the function name was an annoyance each time, I shortened it with the following anonymous functions.</p><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-python">_addx = lambda co, newx: addX(co[-1][2], co[-1][3], newx, co)
+_subx = lambda co, newx: subX(co[-1][2], co[-1][3], newx, co)
+_addy = lambda co, newy: addY(co[-1][2], co[-1][3], newy, co)
+_suby = lambda co, newy: subY(co[-1][2], co[-1][3], newy, co)
+</code></pre>
+</markdown></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">And then the hut for coordinates. It basically involved analysing the POST requests for the new coordinates whenever I hit a border and taking note of the move and the new coordinate. For the sake of sanity, here are all of the operations:</p><app-collapsible _ngcontent-sc46="" buttontext="Coordinates Code (Long / Click to expand)" _nghost-sc19=""><button _ngcontent-sc19="" type="button" class="collapsible-controller">Coordinates Code (Long / Click to expand)</button><div _ngcontent-sc19="" class="collapsible"><div _ngcontent-sc46="" class="d-flex media-container"><markdown _ngcontent-sc46="" linenumbers=""><pre class="line-numbers"><code class="language-python">c = [(3,3,3,3)]
+c1 = _addx(c, 27)
+c2 = _addy(c1, 27)
+c3 = _addx(c2, 48)
+c4 = _addy(c3, 72)
+c5 = _addx(c4, 72)
+c6 = _addy(c5, 93)
+c7 = _subx(c6, 24)
+c8 = _suby(c7, 48)
+c9 = _subx(c8, 3)
+c10 = _addy(c9, 135)
+c11 = _addx(c10, 159)
+c12 = _addy(c11, 291)
+c13 = _addx(c12, 336)
+c14 = _addy(c13, 315)
+c14 = _addy(c13, 315)
+c15 = _addx(c14, 402)
+c16 = _suby(c15, 288)
+c17 = _addx(c16, 489)
+c18 = _suby(c17, 180)
+c19 = _addx(c18, 555)
+c20 = _addy(c19, 201)
+c21 = _addx(c20, 621)
+c22 = _suby(c21, 180)
+c23 = _addx(c22, 798)
+c24 = _addy(c23, 201)
+c24 = _addy(c23, 201)
+c25 = _addx(c24, 843)
+c26 = _suby(c25, 183)
+c27 = _addx(c26, 885)
+c28 = _addy(c27, 201)
+c29 = _addx(c28, 951)
+c30 = _suby(c29, 183)
+c31 = _addx(c30, 1017)
+c32 = _addy(c31, 315)
+c33 = _addx(c32, 1173)
+c34 = _addy(c33, 465)
+c35 = _subx(c34, 1125)
+c36 = _suby(c35, 444)
+c37 = _subx(c36, 1059)
+c38 = _addy(c37, 555)
+c39 = _subx(c38, 972)
+c40 = _addy(c39, 576)
+c41 = _subx(c40, 906)
+c42 = _suby(c41, 552)
+c43 = _subx(c42, 663)
+c44 = _suby(c43, 444)
+c45 = _subx(c44, 597)
+c46 = _addy(c45, 465)
+c47 = _subx(c46, 354)
+c48 = _suby(c47, 447)
+c48 = _suby(c47, 447)
+c49 = _subx(c48, 267)
+c50 = _addy(c49, 576)
+c51 = _subx(c50, 165)
+c52 = _suby(c51, 399)
+c53 = _subx(c52, 3)
+c54 = _addy(c53, 513)
+c55 = _addx(c54, 48)
+c56 = _addy(c55, 534)
+c57 = _addx(c56, 72)
+c58 = _addy(c57, 555)
+c59 = _subx(c58, 3)
+c60 = _addy(c59, 579)
+c61 = _addx(c60, 72)
+c62 = _addy(c61, 600)
+c63 = _subx(c62, 3)
+c64 = _addy(c63, 687)
+c65 = _addx(c64, 27)
+c66 = _suby(c65, 621)
+c67 = _addx(c66, 51)
+c68 = _addy(c67, 687)
+c69 = _addx(c68, 423)
+c70 = _suby(c69, 663)
+c71 = _addx(c70, 444)
+c72 = _addy(c71, 687)
+c73 = _addx(c72, 468)
+c74 = _suby(c73, 618)
+c75 = _addx(c74, 489)
+c76 = _addy(c75, 642)
+c77 = _addx(c76, 513)
+c78 = _suby(c77, 618)
+c79 = _addx(c78, 534)
+c80 = _addy(c79, 687)
+c81 = _addx(c80, 711)
+c82 = _suby(c81, 645)
+c83 = _addx(c82, 732)
+c84 = _suby(c83, 621)
+c85 = _addx(c84, 753)
+c86 = _addy(c85, 687)
+c87 = _addx(c86, 774)
+c88 = _suby(c87, 621)
+c89 = _addx(c88, 795)
+c90 = _addy(c89, 687)
+c91 = _addx(c90, 1107)
+c92 = _suby(c91, 666)
+c93 = _addx(c92, 1260)
+c94 = _suby(c93, 642)
+c95 = _subx(c94, 1236)
+c96 = _suby(c95, 618)
+c97 = _addx(c96, 1257)
+c98 = _suby(c97, 510)
+c99 = _subx(c98, 1212)
+c100 = _suby(c99, 489)
+c101 = _addx(c100, 1239)
+c102 = _suby(c101, 465)
+c103 = _subx(c102, 1212)
+c104 = _suby(c103, 444)
+c105 = _addx(c104, 1236)
+c106 = _suby(c105, 420)
+c107 = _addx(c106, 1257)
+c108 = _suby(c107, 378)
+c109 = _subx(c108, 1236)
+c110 = _suby(c109, 354)
+c111 = _addx(c110, 1260)
+c112 = _suby(c111, 225)
+c113 = _subx(c112, 1212)
+c114 = _suby(c113, 69)
+c115 = _subx(c114, 1191)
+c116 = _suby(c115, 3)
+c117 = _addx(c116, 1281)
+c118 = _addy(c117, 51)
+c119 = _subx(c118, 1257)
+c120 = _suby(c119, 27)
+c121 = _subx(c120, 1236)
+c122 = _addy(c121, 117)
+c123 = _addx(c122, 1257)
+c124 = _suby(c123, 69)
+c125 = _addx(c124, 1278)
+c126 = _addy(c125, 117)
+
+export(c126)
+</code></pre>
+</markdown></div></div></app-collapsible><br _ngcontent-sc46=""><br _ngcontent-sc46=""><p _ngcontent-sc46="">Let's go get the flag!</p><div _ngcontent-sc46="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc46="" class="d-flex"><img _ngcontent-sc46="" loading="eager" src="assets/images/2021/central-infosec-ctf/hack-the-maze/trajectory.gif" alt="We have the flag!"></div></div><br _ngcontent-sc46=""><p _ngcontent-sc46="">I guess you can see why it is called the "sledgehammer" method now. Anyhow, the flag is <code _ngcontent-sc46="">Central-InfoSec{@RN7_4@RD_9@m35_FUN_700}</code>.</p><p _ngcontent-sc46="">Hope you had fun reading this!</p></div></app-post-body></app-central-infosec-ctf-hack-the-maze-hard><!----><div _ngcontent-sc95=""><span _ngcontent-sc95=""></span><br _ngcontent-sc95=""></div></div><div _ngcontent-sc95="" class="sidebar"><app-sidebar _ngcontent-sc95=""><app-socials><h4>~$ Find me here</h4><div class="center d-flex flex-row justify-content-center flex-wrap"><div class="mx-2"><a target="_blank" href="https://twitter.com/AtomicNicos" rel="noopener"><em class="fab fa-twitter-square fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://linkedin.com/in/nicolas-boeckh" rel="noopener"><em class="fab fa-linkedin fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://github.com/AtomicNicos" rel="noopener"><em class="fab fa-github-square fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://gitlab.unige.ch/Nicolas.Boeckh" rel="noopener"><em class="fab fa-gitlab fa-2x"></em></a></div>​
+</div></app-socials><div class="separator my-4"></div><app-latest><h4>~$ Latest Posts</h4><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Python">Dissecting the Central-Infosec Python challenges</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Static-Hard">Dissecting the Central-Infosec Static Code Analysis challenge</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Maze-Hard">Dissecting the Central-Infosec Game Exploitation challenge</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-All">Participating in the Central-Infosec CTF!</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_03_07+Much-Ado-About-Passwords">A much ado about passwords and password management</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_02_26+TraceLabs-CTF-With-Hacksouth">Participating in the TraceLabs OSINT CTF with HackSouth</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_02_06+Building-DOs-Website">Building DO's website in 6 days!</a></div><!----></app-latest><div class="separator my-4"></div><app-list-tag-count _nghost-sc93=""><h4 _ngcontent-sc93="">~$ Tags</h4><div _ngcontent-sc93="" class="d-flex flex-wrap"><a _ngcontent-sc93="" class="no-underline" href="/tags/Information Security"><span _ngcontent-sc93="">Information Security (14)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/CTF"><span _ngcontent-sc93="">CTF (6)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Write-Up"><span _ngcontent-sc93="">Write-Up (3)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/OSINT"><span _ngcontent-sc93="">OSINT (4)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Community"><span _ngcontent-sc93="">Community (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Development"><span _ngcontent-sc93="">Development (2)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Web"><span _ngcontent-sc93="">Web (2)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Cyber Security"><span _ngcontent-sc93="">Cyber Security (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Talks"><span _ngcontent-sc93="">Talks (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/IOT"><span _ngcontent-sc93="">IOT (4)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Personal"><span _ngcontent-sc93="">Personal (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Privacy"><span _ngcontent-sc93="">Privacy (3)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Media"><span _ngcontent-sc93="">Media (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Programming"><span _ngcontent-sc93="">Programming (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Convention"><span _ngcontent-sc93="">Convention (4)</span></a><!----></div></app-list-tag-count></app-sidebar></div></div></app-main-body><app-footer class="align-items-end" _nghost-sc96=""><footer _ngcontent-sc96="" class="py-4 mt-3 footer"><div _ngcontent-sc96="" class="container center"><a _ngcontent-sc96="" routerlink="/copyright" href="/copyright">Copyright CC-BY-SA</a> AtomicNicos 2020-2021<br _ngcontent-sc96=""> (<a _ngcontent-sc96="" routerlink="/privacy-policy" href="/privacy-policy">Privacy Policy</a>) </div></footer></app-footer></div></app-root>
+<script src="runtime-es2015.c755be3399e0cdda5649.js" type="module"></script><script src="runtime-es5.c755be3399e0cdda5649.js" nomodule="" defer=""></script><script src="polyfills-es5.4701afd11f99e94e7107.js" nomodule="" defer=""></script><script src="polyfills-es2015.ed539060b3b3741f3256.js" type="module"></script><script src="scripts.f3f14e69bbed1c1b15ca.js" defer=""></script><script src="main-es2015.65a8f94f8b93cfd2ad21.js" type="module"></script><script src="main-es5.65a8f94f8b93cfd2ad21.js" nomodule="" defer=""></script>
+
+</body></html><!-- This page was prerendered with Angular Universal -->

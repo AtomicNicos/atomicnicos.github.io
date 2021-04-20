@@ -17,6 +17,34 @@
       <link>https://www.atomicnicos.me</link>
     </image>
     <item>
+      <title>Dissecting the Central-Infosec Python challenges</title>
+      <link>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Python</link>
+      <description>This is a write-up of the "07. Reversing: Code Analysis (CIS-WEBSRV01)" series of challenges in the context of the  Central Infosec CTF.</description>
+      <guid>https://atomicnicos.me/postx-2021-16</guid>
+      <pubDate>Tue, April. 20th, 2021</pubDate>
+    </item>
+    <item>
+      <title>Dissecting the Central-Infosec Static Code Analysis challenge</title>
+      <link>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Static-Hard</link>
+      <description>This is a write-up for the hardest of the "14. Web Exploitation: Advanced (CIS-WEBSRV01)" series of challenges in the context of the  Central Infosec CTF.</description>
+      <guid>https://atomicnicos.me/postx-2021-15</guid>
+      <pubDate>Tue, April. 20th, 2021</pubDate>
+    </item>
+    <item>
+      <title>Dissecting the Central-Infosec Game Exploitation challenge</title>
+      <link>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Maze-Hard</link>
+      <description>This is a write-up for the hardest of the "13. Web Exploitation: Games (CIS-WEBSRV01)" series of challenges in the context of the  Central Infosec CTF.</description>
+      <guid>https://atomicnicos.me/postx-2021-14</guid>
+      <pubDate>Tue, April. 20th, 2021</pubDate>
+    </item>
+    <item>
+      <title>X</title>
+      <link>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-All</link>
+      <description>Going over various (non-)solutions people use to store their passwords and the appeal of password management solutions.</description>
+      <guid>https://atomicnicos.me/postx-2021-13</guid>
+      <pubDate>Tue, April. 20th, 2021</pubDate>
+    </item>
+    <item>
       <title>A much ado about passwords and password management</title>
       <link>https://atomicnicos.me/postx/2021/2021_03_07+Much-Ado-About-Passwords</link>
       <description>Going over various (non-)solutions people use to store their passwords and the appeal of password management solutions.</description>

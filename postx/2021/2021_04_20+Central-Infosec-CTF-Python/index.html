@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="en-US"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="og:url" content="https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Python">
+  <meta name="og:locale" content="en_us">
+  <meta name="og:site_name" content="https://atomicnicos.me">
+  <meta name="og:title" content="Dissecting the Central-Infosec Python challenges | AtomicNicos's Blog">
+  <meta name="og:description" content="Dissecting the Central-Infosec Python challenges: A post on 'AtomicNicos's Blog at the end of the universe, talking all things infosec, IoT, development and personal.">
+  <meta name="og:image" content="https://atomicnicos.mehttps://www.centralinfosec.com/blog/img/central-infosec-shield-black.png">
+  <meta name="description" content="Dissecting the Central-Infosec Python challenges: A post on 'AtomicNicos's Blog at the end of the universe, talking all things infosec, IoT, development and personal.">
+  <meta name="keywords" content="atomicnicos, osint, infosec, security, cybersec, cybersecurity, central-infosec, ctf, challenge, write-up, python, code, reversal">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Python">
+  <meta name="twitter:image" content="https://atomicnicos.mehttps://www.centralinfosec.com/blog/img/central-infosec-shield-black.png">
+  <meta name="twitter:label1" content="Written By">
+  <meta name="twitter:data1" content="Nicolas Boeckh">
+  <meta name="twitter:site" content="@AtomicNicos">
+  <meta name="twitter:creator" content="@AtomicNicos">
+  <meta name="twitter:image:width" content="1280">
+  <meta name="twitter:image:height" content="720">
+  <title>Dissecting the Central-Infosec Python challenges | AtomicNicos's Blog</title>
+  <base href="/">
+  <link rel="icon" type="image/x-icon" href="favicon.png">
+  <script src="https://kit.fontawesome.com/88cfc0e7e2.js" integrity="sha384-D5umrdla2Gz+/XOF0CPMgLM3J1PNIy6v3LWJLECqQFWq6VhEdlot37ppKG2HKH8b" crossorigin="anonymous"></script>
+  <script>
+    // Log the value of FCP to the console | https://web.dev/fcp/#measure-fcp-in-javascript
+    /*const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntriesByName('first-contentful-paint')) {
+        // console.log('FCP: ', entry.startTime);
+        observer.disconnect();
+      }
+    })
+    observer.observe({type: 'paint', buffered: true});*/
+  </script>
+<link rel="stylesheet" href="styles.0bd315b99491284b7394.css"><style ng-transition="atomicnicos-me">.sidebar[_ngcontent-sc95]{position:relative;float:left;width:30%;padding:0 10px;overflow-y:visible}</style><style ng-transition="atomicnicos-me">footer[_ngcontent-sc96]{border-top:1px dashed #b5e853}</style><style ng-transition="atomicnicos-me">div[_ngcontent-sc93] > a[_ngcontent-sc93] > span[_ngcontent-sc93]{margin:.25rem;padding:.5rem;background-color:#2e2e2e;border-radius:.25rem;font-size:smaller}div[_ngcontent-sc93] > a[_ngcontent-sc93]{margin:.5rem 0}</style><style ng-transition="atomicnicos-me">markdown[_ngcontent-sc44] {
+      page-break-inside: avoid;
+    }</style><style ng-transition="atomicnicos-me">p[_ngcontent-sc25]{font-size:smaller;color:#aaa}</style><style ng-transition="atomicnicos-me">p[_ngcontent-sc26]{font-size:smaller;color:#aaa}span[_ngcontent-sc26]{margin:.375rem;padding:.5rem;border-radius:.5rem;background-color:#484848}</style></head>
+<body>
+  <app-root ng-version="11.0.0"><div class="h-100 w-100 d-flex flex-column justify-content-between"><app-header class="align-self-stretch"><header class="mb-3"><div class="container"><a id="a-title" href="/"><h1 class="ml-2">atomicnicos​@1337m4ch1n3</h1></a><h2>AtomicNicos's Blog at the end of the universe.</h2><nav><ul class="nav-lists d-flex flex-row flex-wrap"><li class="paths align-middle my-auto justify-content-center">Paths:</li><li class="nav-elements"><a href="/whoami">~$ whoami</a></li><li class="nav-elements"><a href="/posts">~$ ls -la ./posts</a></li></ul></nav></div></header></app-header><app-main-body class="align-self-stretch align-items-stretch mb-auto" _nghost-sc95=""><div _ngcontent-sc95="" class="container main-page"><div _ngcontent-sc95="" class="main-content"><router-outlet></router-outlet><app-central-infosec-ctf-python _nghost-sc44=""><app-post-body _ngcontent-sc44=""><h1>~$ Dissecting the Central-Infosec Python challenges</h1><app-when _nghost-sc25=""><p _ngcontent-sc25="">Posted on Apr. 20th, 2021. <!----></p></app-when><app-tag-viewer _nghost-sc26=""><p _ngcontent-sc26=""><strong _ngcontent-sc26="">Tags:</strong><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/Information Security">Information Security</a></span><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/CTF">CTF</a></span><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/Write-Up">Write-Up</a></span><!----></p><!----><br _ngcontent-sc26=""></app-tag-viewer><div><p _ngcontent-sc44="">This is a write-up of the "07. Reversing: Code Analysis (CIS-WEBSRV01)" series of challenges in the context of the <a _ngcontent-sc44="" target="_blank" href="https://ctf.centralinfosec.com/" rel="noopener"><em _ngcontent-sc44="" class="fas fa-external-link-square-alt"></em> Central Infosec CTF</a>.</p><p _ngcontent-sc44="">The challenges consist of Python code to analyse and reverse, in order to find a series of flags. This write-up assumes just a basic amount of programming knowledge, and will walk you through most of the rest.</p><h4 _ngcontent-sc44="">Summary</h4><ul _ngcontent-sc44=""><li _ngcontent-sc44=""><a _ngcontent-sc44="" routerlink="." fragment="chal-01" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Python#chal-01">Challenge 1: Reading the script</a></li><li _ngcontent-sc44=""><a _ngcontent-sc44="" routerlink="." fragment="chal-02" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Python#chal-02">Challenge 2: Flipping the script</a></li><li _ngcontent-sc44=""><a _ngcontent-sc44="" routerlink="." fragment="chal-03" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Python#chal-03">Challenge 3: Reversing the function</a></li><li _ngcontent-sc44=""><a _ngcontent-sc44="" routerlink="." fragment="chal-04" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Python#chal-04">Challenge 4: Flipping the encoding</a></li><li _ngcontent-sc44=""><a _ngcontent-sc44="" routerlink="." fragment="chal-05" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Python#chal-05">Challenge 5: Dissassembling the operations</a></li></ul><br _ngcontent-sc44=""><h4 _ngcontent-sc44="" id="chal-01">Challenge 1: Reading the script</h4><p _ngcontent-sc44="">The first challenge, located at the URL <code _ngcontent-sc44="">$MACHINE_IP/python-01</code>, is a small python script that refreshes a few basics of string operations in Python, which you can see below.</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers="">
+```python
+str1 = "P"
+str2 = "7H0N"
+str3 = "C0NC@7"
+str1 += "Y"
+str2 = "57R"
+print("Central-InfoSec" + "{" + str1 + "_" + str2 + "_" + str3 + "}")
+# Output: Central-InfoSec{???}
+```
+    </markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">Let's break this down.</p><div _ngcontent-sc44="" class="d-flex flex-row align-items-center justify-content-between media-container"><div _ngcontent-sc44=""><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">str1 = "P"
+str2 = "7H0N"
+str3 = "C0NC@7"
+</code></pre>
+</markdown></div><div _ngcontent-sc44="" class="d-flex"><img _ngcontent-sc44="" src="assets/images/2021/central-infosec-ctf/python-01/step1.png" height="130" alt="Setting up the variables."></div></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">In the code above, we can see the declaration of a few variables (ie. boxes that have a name and that now contain a bit of information).</p><div _ngcontent-sc44="" class="d-flex flex-row align-items-center justify-content-between media-container"><div _ngcontent-sc44=""><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers" data-start="4"><code class="language-python">str1 += "Y"
+str2 = "57R"
+</code></pre>
+</markdown></div><div _ngcontent-sc44="" class="d-flex"><img _ngcontent-sc44="" src="assets/images/2021/central-infosec-ctf/python-01/step2.png" height="130" alt="Setting up the variables."></div></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">In this small bit, <code _ngcontent-sc44="">str1</code> has the character <code _ngcontent-sc44="">"Y"</code> added to it, resulting in it having the value <code _ngcontent-sc44="">"PY"</code>. The content of <code _ngcontent-sc44="">str2</code> however, gets replaced with the value <code _ngcontent-sc44="">"57R"</code>.</p><div _ngcontent-sc44="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc44=""><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers" data-start="6"><code class="language-python">print("Central-InfoSec" + "{" + str1 + "_" + str2 + "_" + str3 + "}")
+# Output: Central-InfoSec{???}
+</code></pre>
+</markdown></div></div><br _ngcontent-sc44=""><div _ngcontent-sc44="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc44="" class="d-flex"><img _ngcontent-sc44="" src="assets/images/2021/central-infosec-ctf/python-01/step3.png" height="50" alt="Concatenating the strings."></div></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">This last bit is the bit that does the work of showing the flag, which is <code _ngcontent-sc44="">Central-InfoSec{PY_57R_C0NC@7}</code>.</p><br _ngcontent-sc44=""><h4 _ngcontent-sc44="" id="chal-02">Challenge 2: Flipping the script</h4><p _ngcontent-sc44="">The second challenge, located at the URL <code _ngcontent-sc44="">$MACHINE_IP/python-02</code>, is a small script that goes on about string replacement. The key is to go from the output (<code _ngcontent-sc44="">"Central-InfoSec{$7R1N9_R3PL@C3M3N7_$47645558}"</code>) and reverse the code to find the input (<code _ngcontent-sc44="">"Central-InfoSec{???}"</code>).</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">flag = "Central-InfoSec{???}"
+flag = flag.replace("5","$",2)
+flag = flag.replace("2","4")
+flag = flag.replace("5","4",1)
+flag = flag.replace("8","58",1)
+
+print(flag)
+
+# Input: Central-InfoSec{???}
+# Output: Central-InfoSec{$7R1N9_R3PL@C3M3N7_$47645558}
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">The way to deal with this is to reverse the steps taken to obfuscate the flag, which are each of the <code _ngcontent-sc44="">replace</code> operations.</p><p _ngcontent-sc44="">One thing to note is the optional third parameter that sometimes shows up, which according to the function signature (<code _ngcontent-sc44="">string.replace(oldvalue, newvalue, count)</code>) is the amount of times the replacement is allowed to run on one string.</p><p _ngcontent-sc44="">So to reverse this we are going to define the input as the original output, do every step in the opposite order and switch the <code _ngcontent-sc44="">oldvalue</code> and <code _ngcontent-sc44="">newvalue</code> parameters in each <code _ngcontent-sc44="">replace</code> statement copied from the original code.</p><div _ngcontent-sc44="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc44="" class="d-flex"><img _ngcontent-sc44="" src="assets/images/2021/central-infosec-ctf/python-02/steps.png" alt="Setting up the variables."></div></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">To do this we're going to be writing the following script:</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">flag = "Central-InfoSec{$7R1N9_R3PL@C3M3N7_$47645558}"
+flag = flag.replace("58","8",1)
+flag = flag.replace("4","5",1)
+flag = flag.replace("4","2")
+flag = flag.replace("$","5",2)
+print(flag)
+
+# Input: Central-InfoSec{$7R1N9_R3PL@C3M3N7_$47645558}
+# Output: Central-InfoSec{57R1N9_R3PL@C3M3N7_55762558}
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">This means our original string was <code _ngcontent-sc44="">Central-InfoSec{57R1N9_R3PL@C3M3N7_55762558}</code>, and is also the flag required for this challenge.</p><br _ngcontent-sc44=""><h4 _ngcontent-sc44="" id="chal-03">Challenge 3: Reversing the function</h4><p _ngcontent-sc44="">The third challenge, located at the URL <code _ngcontent-sc44="">$MACHINE_IP/python-03</code>, is a small script that goes on about string replacement. The key is to go from the output (<code _ngcontent-sc44="">"Central-InfoSec{$7R1N9_R3PL@C3M3N7_$47645558}"</code>) and reverse the code to find the input (<code _ngcontent-sc44="">"Central-InfoSec{???}"</code>).</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def encodeNumbers(statement, num1, num2):
+    number1 = str(num1)
+    number2 = str(int(number1)+int(num2))
+    statement = statement.replace(number1,number2)
+    return statement
+
+flag = "Central-InfoSec{???}"
+flag = encodeNumbers(flag,7,3)
+flag = encodeNumbers(flag,3,1)
+flag = encodeNumbers(flag,2,4)
+flag = encodeNumbers(flag,6,8)
+flag = encodeNumbers(flag,5,26)
+
+print(flag)
+
+# Input: Central-InfoSec{???}
+# Output: Central-InfoSec{4NC0D4D_NUM84R31_131140}
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">So, before doing anything, let's find out what this code does.</p><p _ngcontent-sc44="">The first thing it does is define a function (which you can notice by the <code _ngcontent-sc44="">def</code> keyword), named <code _ngcontent-sc44="">encodeNumbers</code>. A function is a block of code you want to run multiple times without having to rewrite the code each time, and is quite useful in programming.</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def encodeNumbers(statement, num1, num2):
+    number1 = str(num1)
+    number2 = str(int(number1)+int(num2))
+    statement = statement.replace(number1,number2)
+    return statement
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">This function takes three parameters, the first (<code _ngcontent-sc44="">statement</code>) being the flag, the second (<code _ngcontent-sc44="">num1</code>) and third (<code _ngcontent-sc44="">num2</code>) being numbers.</p><p _ngcontent-sc44="">Its first step is defining a parameter named <code _ngcontent-sc44="">number1</code>, to which the string representation of the <code _ngcontent-sc44="">num1</code> parameter is assigned.</p><p _ngcontent-sc44="">Its second step is defining a parameter named <code _ngcontent-sc44="">number2</code>, which is the string representation of the sum of <code _ngcontent-sc44="">number1</code> (but as a number, so basically <code _ngcontent-sc44="">num1</code>) and the <code _ngcontent-sc44="">num2</code> parameter.</p><p _ngcontent-sc44="">Its third step is replacing <code _ngcontent-sc44="">number1</code> string with the <code _ngcontent-sc44="">number2</code> string in the given flag.</p><p _ngcontent-sc44="">Finally, it returns the flag. (When a function returns a value it allows this value to be assigned to a variable outside of the function itself)</p><div _ngcontent-sc44="" class="d-flex flex-row align-items-center media-container"><div _ngcontent-sc44="" class="d-flex"><img _ngcontent-sc44="" src="assets/images/2021/central-infosec-ctf/python-03/steps.png" alt="Analyzing the function."></div></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">What this function is doing is replacing every occurence of <code _ngcontent-sc44="">num1</code> by the sum of <code _ngcontent-sc44="">num1</code> and <code _ngcontent-sc44="">num2</code>.</p><p _ngcontent-sc44="">So to reverse this function, we make it take the exact same numbers, but invert the order in the <code _ngcontent-sc44="">replace</code> statement.</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def decodeNumbers(statement, num1, num2):
+    number1 = str(num1)
+    number2 = str(num1 + num2)  # Replaced with both numerical values for easier comprehension
+    statement = statement.replace(number2,number1)
+    return statement
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">We then do like before and reverse the order of operations in order to obtain:</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers" data-start="7"><code class="language-python">flag = "Central-InfoSec{4NC0D4D_NUM84R31_131140}"
+flag = decodeNumbers(flag,7,3)
+flag = decodeNumbers(flag,3,1)
+flag = decodeNumbers(flag,2,4)
+flag = decodeNumbers(flag,6,8)
+flag = decodeNumbers(flag,5,26)
+
+print(flag)
+
+# Input: Central-InfoSec{4NC0D4D_NUM84R31_131140}
+# Output: Central-InfoSec{3NC0D3D_NUM83R5_15130}
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">We can check that this worked correctly by setting the result (<code _ngcontent-sc44="">Central-InfoSec{3NC0D3D_NUM83R5_15130}</code>) as the original flag and rerunning the encoding, which will produce the original output.</p><p _ngcontent-sc44="">This means our original string was <code _ngcontent-sc44="">Central-InfoSec{3NC0D3D_NUM83R5_15130}</code>, and is also the flag required for this challenge.</p><br _ngcontent-sc44=""><h4 _ngcontent-sc44="" id="chal-04">Challenge 4: Flipping the encoding</h4><p _ngcontent-sc44="">The fourth challenge, located at the URL <code _ngcontent-sc44="">$MACHINE_IP/python-04</code>, is a script that deals with function analysis. The key is to invert the function and go from the output (<code _ngcontent-sc44="">"Central-InfoSec{OPU==_DCUG==_64}"</code>) and reverse certain operations to find the input (<code _ngcontent-sc44="">"Central-InfoSec{???}"</code>).</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def b64encode(s, n):
+    return ''.join(chr((ord(char) - ord('a') + n) % 26 + 97) for char in s.lower())
+
+flag1 = "Central-InfoSec{"
+flag2a = "???"
+flag2b = "_"
+flag2c = "????"
+flag2d = "_"
+flag2e = "64"
+flag3 = "}"
+flag2a = b64encode(flag2a,1).upper() + "=="
+flag2c = b64encode(flag2c,2).upper() + "=="
+
+print (flag1 + flag2a + flag2b + flag2c + flag2d + flag2e + flag3)
+
+# Input: Central-InfoSec{???}"
+# Output: Central-InfoSec{OPU==_DCUG==_64}
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><h5 _ngcontent-sc44="">1. Working on the function</h5><p _ngcontent-sc44="">Like the previous challenge, let us start by looking at the function:</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def b64encode(s, n):
+    return ''.join(chr((ord(char) - ord('a') + n) % 26 + 97) for char in s.lower())
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">This function takes two parameters, <code _ngcontent-sc44="">s</code> (the flag) and <code _ngcontent-sc44="">n</code> (a number). What it then does is a series of operations, which might be easier to understand if we expand it.</p><p _ngcontent-sc44="">The first thing I wanted to touch on is that the <code _ngcontent-sc44="">ord</code> and <code _ngcontent-sc44="">chr</code> functions are both functions that are used to transform from an ASCII character to the ASCII index and vice-versa.</p><p _ngcontent-sc44="">What is an ASCII character or an ASCII index? Well, since everything in computers deals primarily with numbers, if you want to write anything you need a reference table (that converts from numbers to characters). For the first 128 characters we call that table the ASCII table (as ASCII stands for <em _ngcontent-sc44="">American Standard Code for Information Interchange</em>).</p><p _ngcontent-sc44="">As such, the character <code _ngcontent-sc44="">'a'</code> is at ASCII index <code _ngcontent-sc44="">97</code> (and is different to ASCII index <code _ngcontent-sc44="">65</code>, which is the character <code _ngcontent-sc44="">'A'</code>). So our <code _ngcontent-sc44="">ord</code> function, if supplied with <code _ngcontent-sc44="">'a'</code> as a parameter, will return <code _ngcontent-sc44="">97</code>. Inversely, our <code _ngcontent-sc44="">chr</code> function, if supplied with <code _ngcontent-sc44="">97</code> as a parameter, will return <code _ngcontent-sc44="">'a'</code>.</p><p _ngcontent-sc44="">Another thing you might notice is the <code _ngcontent-sc44="">% 26</code> operation. This modulus operation is used to make sure we don't go over 25 characters greater than the ASCII index of <code _ngcontent-sc44="">'a'</code>, which is <code _ngcontent-sc44="">'z'</code>.</p><p _ngcontent-sc44="">Additionally, the <code _ngcontent-sc44="">for char in s.lower()</code> is what is known as a "list comprehension". It acts much like a traditional for loop but can be done on a single line. The <code _ngcontent-sc44="">.lower()</code> method turns a string into it's lowercase variant.</p><p _ngcontent-sc44="">Finally, the <code _ngcontent-sc44="">''.join(...)</code> is a function used to merge all the elements of a list into a string.</p><p _ngcontent-sc44="">So we can rewrite our <code _ngcontent-sc44="">b64encode</code> function like so:</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def b64encode(s, n):
+    result = []                                     # Start our list
+    ascii_offset = ord('a')                         # Define our ASCII offset
+    for char in s.lower():                          # Start our loop
+        new_value = ord(char) - ascii_offset        # Remove the ASCII offset
+        new_value = ord(char) + n                   # Add the defined offset
+        new_value = new_value % 26                  # Make sure it doesn't exceed 'z'
+        new_value = new_value + ascii_offset        # Add the ASCII offset
+        result.append(chr(new_value))               # Add it to the list
+    return ''.join(result)                          # Merge the list elements into a string
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">To reverse that function is now easier: We need to do much of the same, but instead of adding the defined offset, just substract it.</p><p _ngcontent-sc44="">However, since the modulo doesn't have a very well defined behavior in Python when it comes to potential negative numbers, we will also add 26 for good measure before we do the modulo operation, just to be safe.</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def b64decode(s, n):
+    result = []                                     # Start our list
+    ascii_offset = ord('a')                         # Define our ASCII offset
+    for char in s.lower():                          # Start our loop
+        new_value = ord(char) - ascii_offset        # Remove the ASCII offset
+        new_value = ord(char) - n                   # Subtract the defined offset
+        new_value = ord(char) + 26                  # Add 26 to make the modulo work
+        new_value = new_value % 26                  # Make sure it doesn't exceed 'z'
+        new_value = new_value + ascii_offset        # Add the ASCII offset
+        result.append(chr(new_value))               # Add it to the list
+    return ''.join(result)                          # Merge the list elements into a string
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">If you want to rewrite this as a shorter version, you can always write:</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">def b64decode(s, n):
+    return ''.join(chr((ord(char) - ord('a') - n + 26) % 26 + ord('a')) for char in s.lower())
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><h5 _ngcontent-sc44="">2. Working on the challenge</h5><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers" data-start="4"><code class="language-python">flag1 = "Central-InfoSec{"
+flag2a = "???"
+flag2b = "_"
+flag2c = "????"
+flag2d = "_"
+flag2e = "64"
+flag3 = "}"
+flag2a = b64encode(flag2a,1).upper() + "=="
+flag2c = b64encode(flag2c,2).upper() + "=="
+
+print (flag1 + flag2a + flag2b + flag2c + flag2d + flag2e + flag3)
+
+# Input: Central-InfoSec{???}
+# Output: Central-InfoSec{OPU==_DCUG==_64}
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">We have multiple elements here, so let us devise what values are stored in what variable at the end of the program.</p><div _ngcontent-sc44="" class="d-flex flex-row align-items-center"><div _ngcontent-sc44="" class="d-flex media-container"><img _ngcontent-sc44="" src="assets/images/2021/central-infosec-ctf/python-04/steps.png" alt="Analyzing the assignments."></div></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">Here we can see that <code _ngcontent-sc44="">flag2a</code> and <code _ngcontent-sc44="">flag2c</code> are the ones that are affected by the encoding (lines 11 and 12 in the above code). The program first encodes a value, then adds <code _ngcontent-sc44="">"=="</code> to the end of it.</p><p _ngcontent-sc44="">So if we run our <code _ngcontent-sc44="">b64decode</code> function with parameters <code _ngcontent-sc44="">"OPU"</code> and <code _ngcontent-sc44="">1</code>, and once more with parameters <code _ngcontent-sc44="">"DCUG"</code> and <code _ngcontent-sc44="">2</code>, we should obtain the original values for the flags.</p><p _ngcontent-sc44="">As such <code _ngcontent-sc44="">"OPU"</code> turns into <code _ngcontent-sc44="">"not"</code> and <code _ngcontent-sc44="">"DCUG"</code> turns into <code _ngcontent-sc44="">"base"</code>.</p><p _ngcontent-sc44="">This makes the original flag be <code _ngcontent-sc44="">Central-InfoSec{not_base_64}</code> (which would be correct, since the functions are operating more like a <a _ngcontent-sc44="" href="https://en.wikipedia.org/wiki/Caesar_cipher" rel="noopener" target="_blank"><em _ngcontent-sc44="" class="fas fa-external-link-square-alt"></em> Caesar Shift Cipher</a>). <br _ngcontent-sc44=""></p><h4 _ngcontent-sc44="" id="chal-05">Challenge 5: Dissassembling the operations</h4><p _ngcontent-sc44="">The fifth challenge, located at the URL <code _ngcontent-sc44="">$MACHINE_IP/python-04</code>, is a script that deals with function analysis. The key is to invert the function and go from the output (<code _ngcontent-sc44="">"Central-InfoSec{OPU==_DCUG==_64}"</code>) and reverse certain operations to find the input (<code _ngcontent-sc44="">"Central-InfoSec{???}"</code>).</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers"><code class="language-python">flag1 = "Central-InfoSec{"
+flag2a = "??_"
+flag2b = "?????????"
+flag2b = "C".join(flag2b.split("_"))[::-1]
+flag2c = "_?????"[::-1]
+flag2d = "8".join((flag2a + flag2b + flag2c).split("_"))[::-1]
+flag3 = "}"
+
+print(flag1 + flag2d + flag3);
+
+# Input: Central-InfoSec{???}
+# Output: Central-InfoSec{84@RD?7415C74@7851}
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">This python script is a bit simpler in structure, but is a bit harder to analyze than our previous codes. Here we will go up from <code _ngcontent-sc44="">flag2d</code> and find the original <code _ngcontent-sc44="">flag2a</code>, <code _ngcontent-sc44="">flag2b</code> and <code _ngcontent-sc44="">flag2c</code>.</p><p _ngcontent-sc44=""><code _ngcontent-sc44="">flag2d</code> ends up as <code _ngcontent-sc44="">84@RD?7415C74@7851</code>. It is the result of a string flip operation (<code _ngcontent-sc44="">[::-1]</code>, which will reverse any list or string), which is done on the result of a <code _ngcontent-sc44="">'8'.join</code> operation (which is the same as before, but instead of merging the elements outright, is going to add a <code _ngcontent-sc44="">'8'</code> character at each interstice), which is done on the result of a <code _ngcontent-sc44="">join</code> operation, which is done on the concatenation of <code _ngcontent-sc44="">flag2a</code>, <code _ngcontent-sc44="">flag2b</code> and <code _ngcontent-sc44="">flag2c</code>.</p><p _ngcontent-sc44="">It gets confusing fast, so let's break it down a little:</p><div _ngcontent-sc44="" class="d-flex media-container"><markdown _ngcontent-sc44="" linenumbers=""><pre class="line-numbers" data-start="6"><code class="language-python">flag2d = "8".join((flag2a + flag2b + flag2c).split("_"))[::-1]     # 84@RD?7415C74@7851
+flag2d_alpha = (flag2a + flag2b + flag2c)                          # Op4: "15_" + ?
+flag2d_bis = flag2d_alpha.split("_")                               # Op3: "15_7@47C5147?DR@4_"
+flag2d_ter = "8".join(flag2d_bis)                                  # Op2: ["15", "7@47C5147?DR@4", ""]
+flag2d_quat = flag2d_ter[::-1]                                     # Op1: "1587@47C5147?DR@48"
+</code></pre>
+</markdown></div><br _ngcontent-sc44=""><p _ngcontent-sc44="">If you read the operations in the opposite direction, and by comparing wit the original structure of <code _ngcontent-sc44="">flag2a</code> (<code _ngcontent-sc44="">"??_"</code>) we have some idea as to what <code _ngcontent-sc44="">flag2a</code> is: <code _ngcontent-sc44="">"15_"</code>.</p><p _ngcontent-sc44=""><code _ngcontent-sc44="">flag2b</code> and <code _ngcontent-sc44="">flag2c</code> are a bit more complicated however.</p><p _ngcontent-sc44="">We now know that <code _ngcontent-sc44="">flag2b + flag2c</code> is <code _ngcontent-sc44="">"7@47C5147?DR@4_"</code>. If we look at the original structure of <code _ngcontent-sc44="">flag2c</code> and the fact that it is reversed, we can find flag2c: We take the underscore (<code _ngcontent-sc44="">"_"</code>) and the 5 character preceding them (<code _ngcontent-sc44="">"?DR@4"</code>).<br _ngcontent-sc44=""> We then reverse this string to obtain: <code _ngcontent-sc44="">flag2c = "_4@RD?"</code></p><p _ngcontent-sc44="">So now we only have <code _ngcontent-sc44="">flag2b</code> left: <code _ngcontent-sc44="">"7@47C5147"</code>.</p><p _ngcontent-sc44="">Line 4 of our original code does the same thing with <code _ngcontent-sc44="">flag_2b</code> as what earlier happened with <code _ngcontent-sc44="">flag_2d</code>. It splits the string on the <code _ngcontent-sc44="">"_"</code> character and merges it again with the <code _ngcontent-sc44="">"C"</code> character at the interstices.</p><p _ngcontent-sc44="">To reverse this we replace the <code _ngcontent-sc44="">"C"</code> in our <code _ngcontent-sc44="">flag_2b</code> by an <code _ngcontent-sc44="">"_"</code>, which gets us <code _ngcontent-sc44="">flag2b = "7@47_5147"</code>.</p><p _ngcontent-sc44="">To finish this off, we assemble the contents of the flag, which becomes: <code _ngcontent-sc44="">"15_" + "7@47_5147" + "_4@RD?"</code>.</p><p _ngcontent-sc44="">The final flag to finish this section off is <code _ngcontent-sc44="">"Central-InfoSec{15_7@47_5147_4@RD?}"</code>.</p><hr _ngcontent-sc44=""><p _ngcontent-sc44="">I hope you enjoyed reading this, as I've tried to make it as entry level into Python as possible. I'll be getting into more technical things in the 2 other write-ups, if that's more your speed!</p></div></app-post-body></app-central-infosec-ctf-python><!----><div _ngcontent-sc95=""><span _ngcontent-sc95=""></span><br _ngcontent-sc95=""></div></div><div _ngcontent-sc95="" class="sidebar"><app-sidebar _ngcontent-sc95=""><app-socials><h4>~$ Find me here</h4><div class="center d-flex flex-row justify-content-center flex-wrap"><div class="mx-2"><a target="_blank" href="https://twitter.com/AtomicNicos" rel="noopener"><em class="fab fa-twitter-square fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://linkedin.com/in/nicolas-boeckh" rel="noopener"><em class="fab fa-linkedin fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://github.com/AtomicNicos" rel="noopener"><em class="fab fa-github-square fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://gitlab.unige.ch/Nicolas.Boeckh" rel="noopener"><em class="fab fa-gitlab fa-2x"></em></a></div>​
+</div></app-socials><div class="separator my-4"></div><app-latest><h4>~$ Latest Posts</h4><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Python">Dissecting the Central-Infosec Python challenges</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Static-Hard">Dissecting the Central-Infosec Static Code Analysis challenge</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Maze-Hard">Dissecting the Central-Infosec Game Exploitation challenge</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-All">Participating in the Central-Infosec CTF!</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_03_07+Much-Ado-About-Passwords">A much ado about passwords and password management</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_02_26+TraceLabs-CTF-With-Hacksouth">Participating in the TraceLabs OSINT CTF with HackSouth</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_02_06+Building-DOs-Website">Building DO's website in 6 days!</a></div><!----></app-latest><div class="separator my-4"></div><app-list-tag-count _nghost-sc93=""><h4 _ngcontent-sc93="">~$ Tags</h4><div _ngcontent-sc93="" class="d-flex flex-wrap"><a _ngcontent-sc93="" class="no-underline" href="/tags/Information Security"><span _ngcontent-sc93="">Information Security (14)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/CTF"><span _ngcontent-sc93="">CTF (6)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Write-Up"><span _ngcontent-sc93="">Write-Up (3)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/OSINT"><span _ngcontent-sc93="">OSINT (4)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Community"><span _ngcontent-sc93="">Community (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Development"><span _ngcontent-sc93="">Development (2)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Web"><span _ngcontent-sc93="">Web (2)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Cyber Security"><span _ngcontent-sc93="">Cyber Security (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Talks"><span _ngcontent-sc93="">Talks (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/IOT"><span _ngcontent-sc93="">IOT (4)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Personal"><span _ngcontent-sc93="">Personal (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Privacy"><span _ngcontent-sc93="">Privacy (3)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Media"><span _ngcontent-sc93="">Media (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Programming"><span _ngcontent-sc93="">Programming (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Convention"><span _ngcontent-sc93="">Convention (4)</span></a><!----></div></app-list-tag-count></app-sidebar></div></div></app-main-body><app-footer class="align-items-end" _nghost-sc96=""><footer _ngcontent-sc96="" class="py-4 mt-3 footer"><div _ngcontent-sc96="" class="container center"><a _ngcontent-sc96="" routerlink="/copyright" href="/copyright">Copyright CC-BY-SA</a> AtomicNicos 2020-2021<br _ngcontent-sc96=""> (<a _ngcontent-sc96="" routerlink="/privacy-policy" href="/privacy-policy">Privacy Policy</a>) </div></footer></app-footer></div></app-root>
+<script src="runtime-es2015.c755be3399e0cdda5649.js" type="module"></script><script src="runtime-es5.c755be3399e0cdda5649.js" nomodule="" defer=""></script><script src="polyfills-es5.4701afd11f99e94e7107.js" nomodule="" defer=""></script><script src="polyfills-es2015.ed539060b3b3741f3256.js" type="module"></script><script src="scripts.f3f14e69bbed1c1b15ca.js" defer=""></script><script src="main-es2015.65a8f94f8b93cfd2ad21.js" type="module"></script><script src="main-es5.65a8f94f8b93cfd2ad21.js" nomodule="" defer=""></script>
+
+</body></html><!-- This page was prerendered with Angular Universal -->

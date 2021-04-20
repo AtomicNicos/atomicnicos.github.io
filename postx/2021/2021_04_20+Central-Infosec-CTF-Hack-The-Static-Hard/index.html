@@ -1,0 +1,299 @@
+<!DOCTYPE html><html lang="en-US"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="og:url" content="https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Static-Hard">
+  <meta name="og:locale" content="en_us">
+  <meta name="og:site_name" content="https://atomicnicos.me">
+  <meta name="og:title" content="Dissecting the Central-Infosec Static Code Analysis challenge | AtomicNicos's Blog">
+  <meta name="og:description" content="Dissecting the Central-Infosec Static Code Analysis challenge: A post on 'AtomicNicos's Blog at the end of the universe, talking all things infosec, IoT, development and personal.">
+  <meta name="og:image" content="https://atomicnicos.mehttps://www.centralinfosec.com/blog/img/central-infosec-shield-black.png">
+  <meta name="description" content="Dissecting the Central-Infosec Static Code Analysis challenge: A post on 'AtomicNicos's Blog at the end of the universe, talking all things infosec, IoT, development and personal.">
+  <meta name="keywords" content="atomicnicos, osint, infosec, security, cybersec, cybersecurity, central-infosec, ctf, challenge, write-up, static, code, exploitation">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Static-Hard">
+  <meta name="twitter:image" content="https://atomicnicos.mehttps://www.centralinfosec.com/blog/img/central-infosec-shield-black.png">
+  <meta name="twitter:label1" content="Written By">
+  <meta name="twitter:data1" content="Nicolas Boeckh">
+  <meta name="twitter:site" content="@AtomicNicos">
+  <meta name="twitter:creator" content="@AtomicNicos">
+  <meta name="twitter:image:width" content="1280">
+  <meta name="twitter:image:height" content="720">
+  <title>Dissecting the Central-Infosec Static Code Analysis challenge | AtomicNicos's Blog</title>
+  <base href="/">
+  <link rel="icon" type="image/x-icon" href="favicon.png">
+  <script src="https://kit.fontawesome.com/88cfc0e7e2.js" integrity="sha384-D5umrdla2Gz+/XOF0CPMgLM3J1PNIy6v3LWJLECqQFWq6VhEdlot37ppKG2HKH8b" crossorigin="anonymous"></script>
+  <script>
+    // Log the value of FCP to the console | https://web.dev/fcp/#measure-fcp-in-javascript
+    /*const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntriesByName('first-contentful-paint')) {
+        // console.log('FCP: ', entry.startTime);
+        observer.disconnect();
+      }
+    })
+    observer.observe({type: 'paint', buffered: true});*/
+  </script>
+<link rel="stylesheet" href="styles.0bd315b99491284b7394.css"><style ng-transition="atomicnicos-me">.sidebar[_ngcontent-sc95]{position:relative;float:left;width:30%;padding:0 10px;overflow-y:visible}</style><style ng-transition="atomicnicos-me">footer[_ngcontent-sc96]{border-top:1px dashed #b5e853}</style><style ng-transition="atomicnicos-me">div[_ngcontent-sc93] > a[_ngcontent-sc93] > span[_ngcontent-sc93]{margin:.25rem;padding:.5rem;background-color:#2e2e2e;border-radius:.25rem;font-size:smaller}div[_ngcontent-sc93] > a[_ngcontent-sc93]{margin:.5rem 0}</style><style ng-transition="atomicnicos-me">p[_ngcontent-sc25]{font-size:smaller;color:#aaa}</style><style ng-transition="atomicnicos-me">p[_ngcontent-sc26]{font-size:smaller;color:#aaa}span[_ngcontent-sc26]{margin:.375rem;padding:.5rem;border-radius:.5rem;background-color:#484848}</style></head>
+<body>
+  <app-root ng-version="11.0.0"><div class="h-100 w-100 d-flex flex-column justify-content-between"><app-header class="align-self-stretch"><header class="mb-3"><div class="container"><a id="a-title" href="/"><h1 class="ml-2">atomicnicos​@1337m4ch1n3</h1></a><h2>AtomicNicos's Blog at the end of the universe.</h2><nav><ul class="nav-lists d-flex flex-row flex-wrap"><li class="paths align-middle my-auto justify-content-center">Paths:</li><li class="nav-elements"><a href="/whoami">~$ whoami</a></li><li class="nav-elements"><a href="/posts">~$ ls -la ./posts</a></li></ul></nav></div></header></app-header><app-main-body class="align-self-stretch align-items-stretch mb-auto" _nghost-sc95=""><div _ngcontent-sc95="" class="container main-page"><div _ngcontent-sc95="" class="main-content"><router-outlet></router-outlet><app-central-infosec-ctf-hack-the-static-hard><app-post-body><h1>~$ Dissecting the Central-Infosec Static Code Analysis challenge</h1><app-when _nghost-sc25=""><p _ngcontent-sc25="">Posted on Apr. 20th, 2021. <!----></p></app-when><app-tag-viewer _nghost-sc26=""><p _ngcontent-sc26=""><strong _ngcontent-sc26="">Tags:</strong><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/Information Security">Information Security</a></span><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/CTF">CTF</a></span><span _ngcontent-sc26=""><a _ngcontent-sc26="" href="/tags/Write-Up">Write-Up</a></span><!----></p><!----><br _ngcontent-sc26=""></app-tag-viewer><div><p>This is a write-up for the hardest of the "14. Web Exploitation: Advanced (CIS-WEBSRV01)" series of challenges in the context of the <a target="_blank" href="https://ctf.centralinfosec.com/" rel="noopener"><em class="fas fa-external-link-square-alt"></em> Central Infosec CTF</a>.</p><p>The challenge consists of finding the statically encoded credentials to then find the flag, so we need to work through the obfuscated code and see how it works.</p><h4>Summary</h4><ul><li><a routerlink="." fragment="step-01" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Static-Hard#step-01">Step 1: Visiting the page</a></li><li><a routerlink="." fragment="step-02" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Static-Hard#step-02">Step 2: Deobfuscating the script</a></li><li><a routerlink="." fragment="step-03" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Static-Hard#step-03">Step 3: Determining the password validation scheme</a></li><li><a routerlink="." fragment="step-04" class="no-underline" href="/postx/2021/2021_04_20%2BCentral-Infosec-CTF-Hack-The-Static-Hard#step-04">Step 4: Finding the password</a></li></ul><br><h4 id="step-01">Step 1: Visiting the page</h4><p>The first step in this challenge is actually finding it. As per the <code>$MACHINE_IP/robots.txt</code> file, the URL for the challenge is <code>$MACHINE_IP/hack-the-static-hard</code>, and as we load it up in a browser, we see the following page:</p><div class="d-flex flex-row align-items-center media-container"><div class="d-flex"><img src="assets/images/2021/central-infosec-ctf/hack-the-static/login-page.png" alt="Challenge page"></div></div><br><p>As is intimated with the name of the challenge, we'll have to work with the page's static assets. And since it is a login behavior we are targeting (and not some hidden values), we'll take a look at anything related to scripting, usually in the form of some JavaScript.</p><p>To check out the script, we will first check the source code for a <code>&lt;script&gt;</code> tag, and check if it is either loading a script from somewhere, or if it is embedded into the page. To do this, we right click the page and press <code>Inspect element</code>, which renders the following in the sidepane:</p><div class="d-flex flex-row align-items-center media-container"><div class="d-flex"><img src="assets/images/2021/central-infosec-ctf/hack-the-static/page-source.png" alt="Challenge page source code"></div></div><br><p>The two circled areas are the function that is called when the <code>"Login"</code> button is pressed, and the second is the actual script, which contains that function.</p><br><h4 id="step-02">Step 2: Deobfuscating the script</h4><p>Let us focus on that script and directly start by separating the functions and indenting the code: (Trust me, you do not want this oneliner in a code box on this page...)</p><div class="d-flex media-container"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var _0x50da=['Admin','_0x425216','getElementById','btoa','password',
+    'user_id','value','username','V0hwQ05FNVhWVEJPUkdONlBUMD0','atob'];
+  (function(_0x374ae7,_0x50da49){
+    var dataGetter49=function(_0x1f03b9){
+      while(--_0x1f03b9){
+        _0x374ae7['push'](_0x374ae7['shift']());
+      }
+    };
+    dataGetter49(++_0x50da49);
+  }(_0x50da,0x72));
+
+  var dataGetter=function(_0x374ae7,_0x50da49){
+    _0x374ae7=_0x374ae7-0x0;
+    var dataGetter49=_0x50da[_0x374ae7];
+    return dataGetter49;
+  };
+
+  document['getElementById'](dataGetter('0x3'))[dataGetter('0x2')] == dataGetter('0x6') ? (
+      document[dataGetter('0x8')]('isAdmin')['value'] = !![],window[dataGetter('0x9')](
+        document[dataGetter('0x8')](dataGetter('0x0'))[dataGetter('0x2')]
+      )==window[dataGetter('0x5')](dataGetter('0x4')) ?
+        document['getElementById'](dataGetter('0x1'))['value'] = window[dataGetter('0x9')](dataGetter('0x7')) :
+        document[dataGetter('0x8')]('user_id')[dataGetter('0x2')]='1') :
+      document[dataGetter('0x8')]('isAdmin')[dataGetter('0x2')]=![];
+}
+
+function attempt_focus(){
+  setTimeout( function(){ try{
+    d = document.getElementById('username');
+    d.focus();
+    d.select();
+  } catch(e){}
+  }, 200);
+}
+attempt_focus();
+if(typeof onload=='function')onload();
+</code></pre>
+</markdown></div><br><p>There's a saying that goes: "What in the fresh hell is this?". It is apt in the context.</p><p>So let's start at the top:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var _0x50da=['Admin','_0x425216','getElementById','btoa','password',
+    'user_id','value','username','V0hwQ05FNVhWVEJPUkdONlBUMD0','atob'];
+  // ...
+}
+</code></pre>
+</markdown></div><br><p>This sets up an array of strings and function names. Quite nice, let's rename all occurences of <code>_0x50da</code> in our code to <code>data</code>, because that will make things easier.</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data=['Admin','_0x425216','getElementById','btoa','password',
+    'user_id','value','username','V0hwQ05FNVhWVEJPUkdONlBUMD0','atob'];
+  (function(_0x374ae7,_0x50da49){
+    var dataGetter49=function(_0x1f03b9){
+      while(--_0x1f03b9){
+        _0x374ae7['push'](_0x374ae7['shift']());
+      }
+    };
+    dataGetter49(++_0x50da49);
+  }(data,0x72));
+
+  // ...
+}
+</code></pre>
+</markdown></div><br><p>What does this section do? Well, it certainly doesn't make itself readable, that's for sure.</p><p>What we can say is that it is an unnamed function that is directly executed, and it takes 2 parameters: our list of values and functions, and the number <code>0x72</code> (which is the hexadecimal value of <code>114</code>. So what we can do is rename <code>_0x374ae7</code> to <code>data</code> (again) and rename <code>_0x50da49</code> to <code>n</code>:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data=['Admin','_0x425216','getElementById','btoa','password',
+    'user_id','value','username','V0hwQ05FNVhWVEJPUkdONlBUMD0','atob'];
+  (function(data,n){
+    var dataGetter49=function(_0x1f03b9){
+      while(--_0x1f03b9){
+        data['push'](data['shift']());
+      }
+    };
+    dataGetter49(++n);
+  }(data, 114));
+
+  // ...
+}
+</code></pre>
+</markdown></div><p>In the middle of our unnamed function we have a named function called <code>dataGetter49</code> (which just rolls of the tongue). It takes a value related to <code>n</code>, which is <code>++n</code>. What <code>++n</code> really is doing to <code>n</code> is saying: "Hey, before you go and do anything, here's a 1 on me". Effectively, at the moment it is then used, the value of <code>n</code> is <code>n + 1</code>.<br>Since it seems to be muddling with the contents of data, we will rename the internal function to <code>dataMover</code>.</p><p>Let's make our code reflect those changes:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data=['Admin','_0x425216','getElementById','btoa','password',
+    'user_id','value','username','V0hwQ05FNVhWVEJPUkdONlBUMD0','atob'];
+  (function(data, n){
+    var dataMover=function(m){
+      while(--m){
+        data['push'](data['shift']());
+      }
+    };
+    dataMover(++n);
+  }(data, 114));
+
+  // ...
+}
+</code></pre>
+</markdown></div><br><p>Finally, and it's a feature of JavaScript that is heavily abused when dealing with obfuscation, since all JavaScript variables have the <code>prototype</code> structure, you can call a function on them using the string accessor. This is what we see with <code>data['push'](...)</code>, which is the annoying way of writing <code>data.push(...)</code>.<br> Let's follow up on those changes:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data=['Admin','_0x425216','getElementById','btoa','password',
+    'user_id','value','username','V0hwQ05FNVhWVEJPUkdONlBUMD0','atob'];
+  (function(data, n){
+    var dataMover=function(m){
+      while(--m){
+        data.push(data.shift());
+      }
+    };
+    dataMover(++n);
+  }(data, 114));
+
+  // ...
+}
+</code></pre>
+</markdown></div><br><p>If we were to run lines 2 until 11 in a JavaScript console, and then ask the console to give us the contents of the data variable we would see the following:</p><div class="d-flex flex-row align-items-center media-container"><div class="d-flex"><img src="assets/images/2021/central-infosec-ctf/hack-the-static/step1.png" alt="New content in data."></div></div><br><p>We can run it as many times as we want, and that isn't going to change, so we might as well replace lines 2 until 11 of the entire script with:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data = ["password", "user_id", "value", "username", "V0hwQ05FNVhWVEJPUkdONlBUMD0",
+    "atob", "Admin", "_0x425216", "getElementById", "btoa"];
+
+  // ...
+}
+</code></pre>
+</markdown></div><br><p>Onwards then, let us now look at the function <code>dataGetter</code>:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data = ["password", "user_id", "value", "username", "V0hwQ05FNVhWVEJPUkdONlBUMD0",
+    "atob", "Admin", "_0x425216", "getElementById", "btoa"];
+
+  var dataGetter=function(_0x374ae7,_0x50da49){
+    _0x374ae7=_0x374ae7-0x0;
+    var _0x49c249=data[_0x374ae7];
+    return _0x49c249;
+  };
+
+  // ...
+}
+</code></pre>
+</markdown></div><br><p>What does this function do? Well, it takes two parameters. The first one is subtracted by <code>0x0</code>, which is the hexadecimal format for the number <code>0</code>.<br> This line is however far from useless: Given the dynamic nature of javascript, if a number were to be provided in string format, this simple operation would do the job of converting the value to a number for certain.</p><p>What it then does is access our <code>data</code> variable (an array) at the index defined by the variable we just converted to a number, and then returns that value.</p><p>The <code>_0x50da49</code> has absolutely no effect whatsoever on this function, and thus can be removed.</p><p>As such, we've determined that the function acts as a data "getter" sorts, so we can rename it to <code>dataGetter</code>.</p><p>Let's put these changes in writing:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data = ["password", "user_id", "value", "username", "V0hwQ05FNVhWVEJPUkdONlBUMD0",
+    "atob", "Admin", "_0x425216", "getElementById", "btoa"];
+
+  var dataGetter = function(index){
+    index = index - 0x0;
+    var accessedData = data[index];
+    return accessedData;
+  };
+
+  // ...
+}
+</code></pre>
+</markdown></div><br><p>The next bit is the complicated bit: It mixes some calls to our previously defined functions, some prototype access shenanigans, some ternary operators and various JavaScript specific WTF elements.</p><p>Let's already replace the things we know, and then we will get to identifying what is going on:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data = ["password", "user_id", "value", "username", "V0hwQ05FNVhWVEJPUkdONlBUMD0",
+    "atob", "Admin", "_0x425216", "getElementById", "btoa"];
+
+  var dataGetter = function(index){
+    index = index - 0x0;
+    var accessedData = data[index];
+    return accessedData;
+  };
+
+  document['getElementById'](dataGetter('0x3'))[dataGetter('0x2')] == dataGetter('0x6') ? (
+      document[dataGetter('0x8')]('isAdmin')['value'] = !![],window[dataGetter('0x9')](
+        document[dataGetter('0x8')](dataGetter('0x0'))[dataGetter('0x2')]
+      )==window[dataGetter('0x5')](dataGetter('0x4')) ?
+        document['getElementById'](dataGetter('0x1'))['value'] = window[dataGetter('0x9')](dataGetter('0x7')) :
+        document[dataGetter('0x8')]('user_id')[dataGetter('0x2')]='1') :
+      document[dataGetter('0x8')]('isAdmin')[dataGetter('0x2')]=![];
+}
+</code></pre>
+</markdown></div><br><p>Weirdly enough, this has made things worse for us. Well then, I guess we will have to run dataGetter for all of these various values and run with that!</p><div class="mx-auto"><div class="d-flex"><markdown><table>
+<thead>
+<tr>
+<th align="center">0xvalue</th>
+<th>Result for <code>dataGetter(0xvalue)</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">"0x0"</td>
+<td>"password"</td>
+</tr>
+<tr>
+<td align="center">"0x1"</td>
+<td>"user_id"</td>
+</tr>
+<tr>
+<td align="center">"0x2"</td>
+<td>"value"</td>
+</tr>
+<tr>
+<td align="center">"0x3"</td>
+<td>"username"</td>
+</tr>
+<tr>
+<td align="center">"0x4"</td>
+<td>"V0hwQ05FNVhWVEJPUkdONlBUMD0"</td>
+</tr>
+<tr>
+<td align="center">"0x5"</td>
+<td>"atob"</td>
+</tr>
+<tr>
+<td align="center">"0x6"</td>
+<td>"Admin"</td>
+</tr>
+<tr>
+<td align="center">"0x7"</td>
+<td>"_0x425216"</td>
+</tr>
+<tr>
+<td align="center">"0x8"</td>
+<td>"getElementById"</td>
+</tr>
+<tr>
+<td align="center">"0x9"</td>
+<td>"btoa"</td>
+</tr>
+</tbody></table>
+</markdown></div></div><br><p>Now let us replace the replacement game:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data = ["password", "user_id", "value", "username", "V0hwQ05FNVhWVEJPUkdONlBUMD0",
+    "atob", "Admin", "_0x425216", "getElementById", "btoa"];
+
+  var dataGetter = function(index){
+    index = index - 0x0;
+    var accessedData = data[index];
+    return accessedData;
+  };
+
+  document['getElementById']("username")["value"] == "Admin" ? (
+      document["getElementById"]('isAdmin')['value'] = !![],
+      window["btoa"](
+        document["getElementById"]("password")["value"]
+      ) == window["atob"]("V0hwQ05FNVhWVEJPUkdONlBUMD0") ?
+        document['getElementById']("user_id")['value'] = window["btoa"]("_0x425216") :
+        document["getElementById"]('user_id')["value"]='1') :
+      document["getElementById"]('isAdmin')["value"]=![];
+}
+</code></pre>
+</markdown></div><br><p>Ok, this has gotten <strong>much</strong> better. But we can still play around with a few things, notably replacing the prototype string accessors, transforming the JavaScript WTF values into their actual counterparts (<code>![] =&gt; false</code> and <code>!![] =&gt; true</code>), and maybe transforming the ternary operators (which are one-liner if-else statements in the form of <code>condition ? do_if_condition_true : do_if_condition_false</code>) into actual if-else statements:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers"><code class="language-javascript">function checkUsernameAndPassword() {
+  var data = ["password", "user_id", "value", "username", "V0hwQ05FNVhWVEJPUkdONlBUMD0",
+    "atob", "Admin", "_0x425216", "getElementById", "btoa"];
+
+  var dataGetter = function(index){
+    index = index - 0x0;
+    var accessedData = data[index];
+    return accessedData;
+  };
+
+  if (document.getElementById("username").value == "Admin") {
+    document.getElementById('isAdmin').value = true;
+    if (window.btoa(document.getElementById("password").value) == window.atob("V0hwQ05FNVhWVEJPUkdONlBUMD0")) {
+      document.getElementById("user_id").value = window.btoa("_0x425216");
+    } else {
+      document.getElementById('isAdmin').value = false;
+    }
+  } else {
+    document.getElementById('user_id').value = '1';
+  }
+}
+</code></pre>
+</markdown></div><br><p>Woow, far out! This has made the code readeable, and let's us progress onto the next part!</p><br><h4 id="step-03">Step 3: Determining the password validation scheme</h4><p>Well, we now have found the diagram for how this works. But what makes the engines turn? How does it work?</p><p>If you would look at line 11, the first thing to notice is that it is looking for whether or not the username provided in the form is <code>"Admin"</code>.</p><p>If that condition is met, it will set the <code>isAdmin</code> hidden field to <code>true</code>.</p><p>Then we get into a condition we haven't "decoded" yet. Firstly, <code>window.btoa</code> and <code>window.atob</code> are functions that exist by default in JavaScript, so let us check what they produce with our two static values:</p><div class="mx-auto"><markdown linenumbers=""><pre class="line-numbers" data-start="13"><code class="language-javascript">    document.getElementById('isAdmin').value = true;
+    if (window.btoa(document.getElementById("password").value) == "WHpCNE5XVTBORGN6PT0=") {
+      document.getElementById("user_id").value = "XzB4NDI1MjE2";
+    } else {
+      document.getElementById('isAdmin').value = false;
+    }
+</code></pre>
+</markdown></div><br><p>So this password validation scheme is the following:</p><ol><li>It checks whether or not the username entered <code>"Admin"</code>. It sets the <code>isAdmin</code> page value to 1, which here stands for true.</li><li>If that is the case, it will then check whether the password entered is correct and if that is right, sets a hidden <code>user_id</code> field to some obscure value (<code>"XzB4NDI1MjE2"</code>), which is what the form uses to check for the password's validity.</li><li>Otherwise, it resets the <code>isAdmin</code> page value.</li><li>If the username was incorrect, it sets the hidden <code>user_id</code> field to a value that won't be recognised by the password validity checker.</li></ol><h4 id="step-04">Step 4: Finding the password</h4><p>Well, this doesn't help us much. Or does it? If you look at the naming convention of the two functions (<code>atob</code> and <code>btoa</code>) you might notice that they are two sides of the same coin. The one goes "[from] <code>a</code> to <code>b</code>" and the other goes "[from] <code>b</code> to <code>a</code>".</p><p>So if we apply that principle to our code, and remember our first algebra classes, then we know that if you do one thing to one side, then you do the same to the other:</p><div class="mx-auto"><markdown><pre><code class="language-javascript">    window.atob(window.btoa(document.getElementById("password").value)) == window.atob("WHpCNE5XVTBORGN6PT0=")
+</code></pre>
+</markdown></div><br><p>Which, simplified further is:</p><div class="mx-auto"><markdown><pre><code class="language-javascript">    document.getElementById("password").value == "XzB4NWU0NDcz=="
+</code></pre>
+</markdown></div><br><p>We now know of a username (<code>"Admin"</code>) and a password (<code>"XzB4NWU0NDcz=="</code>). Let's go grab the flag!</p><div class="d-flex flex-row align-items-center media-container"><div class="d-flex"><img src="assets/images/2021/central-infosec-ctf/hack-the-static/result.gif" alt="The flag."></div></div><br><p>The flag is <code>Central-InfoSec{H@RD357_H@RD_C0D3D_4_7H3_L055}</code>, and was pretty fun to get. Hope you had fun reading this!</p></div></app-post-body></app-central-infosec-ctf-hack-the-static-hard><!----><div _ngcontent-sc95=""><span _ngcontent-sc95=""></span><br _ngcontent-sc95=""></div></div><div _ngcontent-sc95="" class="sidebar"><app-sidebar _ngcontent-sc95=""><app-socials><h4>~$ Find me here</h4><div class="center d-flex flex-row justify-content-center flex-wrap"><div class="mx-2"><a target="_blank" href="https://twitter.com/AtomicNicos" rel="noopener"><em class="fab fa-twitter-square fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://linkedin.com/in/nicolas-boeckh" rel="noopener"><em class="fab fa-linkedin fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://github.com/AtomicNicos" rel="noopener"><em class="fab fa-github-square fa-2x"></em></a></div>​ <div class="mx-2"><a target="_blank" href="https://gitlab.unige.ch/Nicolas.Boeckh" rel="noopener"><em class="fab fa-gitlab fa-2x"></em></a></div>​
+</div></app-socials><div class="separator my-4"></div><app-latest><h4>~$ Latest Posts</h4><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Python">Dissecting the Central-Infosec Python challenges</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Static-Hard">Dissecting the Central-Infosec Static Code Analysis challenge</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-Hack-The-Maze-Hard">Dissecting the Central-Infosec Game Exploitation challenge</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_04_20+Central-Infosec-CTF-All">Participating in the Central-Infosec CTF!</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_03_07+Much-Ado-About-Passwords">A much ado about passwords and password management</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_02_26+TraceLabs-CTF-With-Hacksouth">Participating in the TraceLabs OSINT CTF with HackSouth</a></div><div class="my-2"><a class="no-underline" href="postx/2021/2021_02_06+Building-DOs-Website">Building DO's website in 6 days!</a></div><!----></app-latest><div class="separator my-4"></div><app-list-tag-count _nghost-sc93=""><h4 _ngcontent-sc93="">~$ Tags</h4><div _ngcontent-sc93="" class="d-flex flex-wrap"><a _ngcontent-sc93="" class="no-underline" href="/tags/Information Security"><span _ngcontent-sc93="">Information Security (14)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/CTF"><span _ngcontent-sc93="">CTF (6)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Write-Up"><span _ngcontent-sc93="">Write-Up (3)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/OSINT"><span _ngcontent-sc93="">OSINT (4)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Community"><span _ngcontent-sc93="">Community (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Development"><span _ngcontent-sc93="">Development (2)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Web"><span _ngcontent-sc93="">Web (2)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Cyber Security"><span _ngcontent-sc93="">Cyber Security (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Talks"><span _ngcontent-sc93="">Talks (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/IOT"><span _ngcontent-sc93="">IOT (4)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Personal"><span _ngcontent-sc93="">Personal (5)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Privacy"><span _ngcontent-sc93="">Privacy (3)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Media"><span _ngcontent-sc93="">Media (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Programming"><span _ngcontent-sc93="">Programming (1)</span></a><a _ngcontent-sc93="" class="no-underline" href="/tags/Convention"><span _ngcontent-sc93="">Convention (4)</span></a><!----></div></app-list-tag-count></app-sidebar></div></div></app-main-body><app-footer class="align-items-end" _nghost-sc96=""><footer _ngcontent-sc96="" class="py-4 mt-3 footer"><div _ngcontent-sc96="" class="container center"><a _ngcontent-sc96="" routerlink="/copyright" href="/copyright">Copyright CC-BY-SA</a> AtomicNicos 2020-2021<br _ngcontent-sc96=""> (<a _ngcontent-sc96="" routerlink="/privacy-policy" href="/privacy-policy">Privacy Policy</a>) </div></footer></app-footer></div></app-root>
+<script src="runtime-es2015.c755be3399e0cdda5649.js" type="module"></script><script src="runtime-es5.c755be3399e0cdda5649.js" nomodule="" defer=""></script><script src="polyfills-es5.4701afd11f99e94e7107.js" nomodule="" defer=""></script><script src="polyfills-es2015.ed539060b3b3741f3256.js" type="module"></script><script src="scripts.f3f14e69bbed1c1b15ca.js" defer=""></script><script src="main-es2015.65a8f94f8b93cfd2ad21.js" type="module"></script><script src="main-es5.65a8f94f8b93cfd2ad21.js" nomodule="" defer=""></script>
+
+</body></html><!-- This page was prerendered with Angular Universal -->
