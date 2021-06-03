@@ -13,9 +13,16 @@
     <category>Cybersecurity</category>
     <image>
       <url>https://atomicnicos.me/assets/content/main/synth.jpg</url>
-      <title>AtomicNicos's Blog at the end of the univers</title>
+      <title>AtomicNicos's Blog at the end of the universe</title>
       <link>https://www.atomicnicos.me</link>
     </image>
+    <item>
+      <title>The 2021 Digital Overdose Conference: Tales and Takeaways</title>
+      <link>https://atomicnicos.me/postx/2021/2021_04_29+Digital-Overdose-Conference</link>
+      <description>Speaking a bit more about my experiences surrounding and during the Digital Overdose Conference.</description>
+      <guid>https://atomicnicos.me/postx-2021-17</guid>
+      <pubDate>Tue, April. 29th, 2021</pubDate>
+    </item>
     <item>
       <title>Dissecting the Central-Infosec Python challenges</title>
       <link>https://atomicnicos.me/postx/2021/2021_04_20+Central-Infosec-CTF-Python</link>

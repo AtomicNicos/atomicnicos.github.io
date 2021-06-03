@@ -152,6 +152,11 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://atomicnicos.me/postx/2021/2021_04_29+Digital-Overdose-Conference</loc>
+    <priority>0.60</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://atomicnicos.me/tags/CTF/</loc>
     <priority>0.40</priority>
     <changefreq>weekly</changefreq>
